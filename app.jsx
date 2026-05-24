@@ -730,14 +730,19 @@ function Footer({ lang }) {
             const hrefs = [
               ['#services', '#services', '#services', '#services', '#services'],
               ['#process', '#why', '#transparency', '#form'],
-              ['#contacts', '#contacts', '#contacts', '#contacts'],
+              ['tel:+996990001755', 'https://wa.me/996990001755', 'https://t.me/askarbek_mamatair', 'https://www.instagram.com/tunduk_kurulush'],
+            ];
+            const targets = [
+              [null, null, null, null, null],
+              [null, null, null, null],
+              [null, '_blank', '_blank', '_blank'],
             ];
             return (
               <div className="footer-col" key={i}>
                 <h4>{col.title}</h4>
                 <ul>
                   {col.items.map((it, j) => (
-                    <li key={j}><a href={hrefs[i][j]}>{it}</a></li>
+                    <li key={j}><a href={hrefs[i][j]} target={targets[i][j]} rel="noopener noreferrer">{it}</a></li>
                   ))}
                 </ul>
               </div>
