@@ -158,10 +158,6 @@ function ConstructionBackdrop({ lang }) {
         <ConstructionSparks/>
         <div className="cbg-grain"/>
       </div>
-      <div className={`cbg-hint ${visible && progress < 0.92 ? 'visible' : ''}`} aria-hidden>
-        <span className="live-dot"/>
-        <span>{t.buildHint}</span>
-      </div>
     </React.Fragment>
   );
 }
@@ -264,26 +260,58 @@ function Welcome({ lang }) {
         <h1 className="welcome-name">{t.brand.name}</h1>
         <p className="welcome-tagline">{t.brand.desc}</p>
         <div className="welcome-divider"/>
-        <a href="#top" className="welcome-enter">
-          <span>{lang === 'ky' ? 'Кирүү' : 'Войти'}</span>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-            <line x1="7" y1="1" x2="7" y2="13"/>
-            <polyline points="3,9 7,13 11,9"/>
-          </svg>
-        </a>
       </div>
     </section>
   );
 }
 
+// ----- Mobile Nav (rendered outside header to avoid backdrop-filter containing block) -----
+function MobileNav({ menuOpen, setMenuOpen, lang, setLang }) {
+  const t = window.T[lang];
+  const close = () => setMenuOpen(false);
+  return (
+    <div className={`mobile-nav${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
+      <div className="mobile-nav-inner">
+        <button className="mobile-nav-close" onClick={close} aria-label="Close menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+            <line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/>
+          </svg>
+        </button>
+        <nav className="mobile-nav-links">
+          <a href="#services" onClick={close}>{t.nav.services}</a>
+          <a href="#why" onClick={close}>{t.nav.why}</a>
+          <a href="#process" onClick={close}>{t.nav.process}</a>
+          <a href="#transparency" onClick={close}>{t.nav.transparency}</a>
+          <a href="#contacts" onClick={close}>{t.nav.contacts}</a>
+        </nav>
+        <div className="mobile-nav-foot">
+          <a href="tel:+996990001755" className="mobile-phone">
+            <window.I.phone width="18" height="18"/>+996 990 001 755
+          </a>
+          <div className="mobile-nav-socials">
+            <a href="https://wa.me/996990001755" className="icon-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><window.I.wa width="18" height="18"/></a>
+            <a href="https://t.me/askarbek_mamatair" className="icon-link" aria-label="Telegram" target="_blank" rel="noopener noreferrer"><window.I.tg width="18" height="18"/></a>
+            <a href="https://www.instagram.com/tunduk_kurulush" className="icon-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><window.I.ig width="18" height="18"/></a>
+          </div>
+          <a href="#form" className="btn btn-primary" onClick={close} style={{ width: '100%', justifyContent: 'center' }}>{t.nav.cta}</a>
+          <div className="lang-switch" role="tablist">
+            <button className={lang === 'ru' ? 'active' : ''} onClick={() => setLang('ru')}>РУ</button>
+            <button className={lang === 'ky' ? 'active' : ''} onClick={() => setLang('ky')}>КЫР</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ----- Header -----
-function Header({ lang, setLang }) {
+function Header({ lang, setLang, menuOpen, setMenuOpen }) {
   const { scrolled, overImage } = useScrolled();
   const t = window.T[lang];
   return (
-    <header className={`header ${scrolled ? 'scrolled' : ''} ${overImage ? 'on-image' : ''}`}>
+    <header className={`header ${scrolled ? 'scrolled' : ''} ${overImage && !menuOpen ? 'on-image' : ''}`}>
       <div className="container header-inner">
-        <a href="#top" className="logo">
+        <a href="#top" className="logo" onClick={() => setMenuOpen(false)}>
           <LogoMark className="logo-mark"/>
           <div className="logo-text">
             <span className="name">{t.brand.name}</span>
@@ -303,15 +331,17 @@ function Header({ lang, setLang }) {
             <button className={lang === 'ky' ? 'active' : ''} onClick={() => setLang('ky')}>КЫР</button>
           </div>
           <a className="phone" href="tel:+996990001755">
-            <window.I.phone width="16" height="16"/>
-            +996 990 001 755
+            <window.I.phone width="16" height="16"/>+996 990 001 755
           </a>
           <a className="icon-link" href="https://wa.me/996990001755" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><window.I.wa width="16" height="16"/></a>
           <a className="icon-link" href="https://t.me/askarbek_mamatair" aria-label="Telegram" target="_blank" rel="noopener noreferrer"><window.I.tg width="16" height="16"/></a>
-          <a href="#form" className="btn btn-primary" style={{ height: 44, minHeight: 44, padding: '0 22px', fontSize: 14 }}>
-            {t.nav.cta}
-          </a>
-          <button className="burger" aria-label="Menu"><window.I.burger width="20" height="20"/></button>
+          <a href="#form" className="btn btn-primary" style={{ height: 44, minHeight: 44, padding: '0 22px', fontSize: 14 }}>{t.nav.cta}</a>
+          <button className="burger" aria-label="Toggle menu" onClick={() => setMenuOpen(v => !v)}>
+            {menuOpen
+              ? <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>
+              : <window.I.burger width="20" height="20"/>
+            }
+          </button>
         </div>
       </div>
     </header>
@@ -780,16 +810,22 @@ function App() {
   const [lang, setLang] = useState(() => {
     try { return localStorage.getItem('tk-lang') || 'ru'; } catch { return 'ru'; }
   });
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     try { localStorage.setItem('tk-lang', lang); } catch {}
     document.documentElement.lang = lang === 'ky' ? 'ky' : 'ru';
   }, [lang]);
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
   useScrollReveal();
 
   return (
     <React.Fragment>
       <Welcome lang={lang}/>
-      <Header lang={lang} setLang={setLang}/>
+      <Header lang={lang} setLang={setLang} menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>
+      <MobileNav menuOpen={menuOpen} setMenuOpen={setMenuOpen} lang={lang} setLang={setLang}/>
       <ConstructionBackdrop lang={lang}/>
       <main>
         <Hero lang={lang}/>
