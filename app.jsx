@@ -236,10 +236,24 @@ function Motes() {
 // ----- Welcome -----
 function Welcome({ lang }) {
   const t = window.T[lang];
+  const vidRef = useRef(null);
+
+  useEffect(() => {
+    const v = vidRef.current;
+    if (!v) return;
+    v.play().catch(() => {});
+  }, []);
+
   return (
     <section className="welcome" id="welcome">
       <div className="welcome-stage" aria-hidden>
-        <video className="welcome-video" autoPlay muted loop playsInline>
+        <video
+          ref={vidRef}
+          className="welcome-video"
+          autoPlay muted loop playsInline
+          webkit-playsinline="true"
+          poster="images/hero-house.png"
+        >
           <source src="uploads/c7d64b1c-6673-47fa-8966-16221c5831a2.mp4" type="video/mp4"/>
         </video>
         <div className="welcome-overlay"/>
