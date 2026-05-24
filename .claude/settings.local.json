@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Lenovo\\\\AppData\\\\Local\\\\Packages\\\\Claude_pzs8sxrjxfjjc\\\\LocalCache\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\" -Recurse | Where-Object { -not $_.PSIsContainer } | Select-Object FullName)",
+      "WebFetch(domain:2gis.kg)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:8080/translations.jsx\" -UseBasicParsing -TimeoutSec 5; $r.Content | Select-String \"office\" } catch { $_.Exception.Message })",
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://localhost:8080/translations.jsx\" -UseBasicParsing -TimeoutSec 5; Write-Output $r.StatusCode; $r.Content.Substring\\(0,100\\))",
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://localhost:8080/translations.jsx\" -UseBasicParsing -TimeoutSec 5; [System.Text.Encoding]::UTF8.GetString\\($r.Content\\) | Select-String \"office\")",
+      "PowerShell(Get-Process python -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force)"
+    ]
+  }
+}
